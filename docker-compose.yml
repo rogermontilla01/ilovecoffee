@@ -1,0 +1,48 @@
+version: "3.5"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/api
+    depends_on:
+      - db
+    command: npm run start:dev
+
+  db:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: 'postgres' 
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-nestjs:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "rogermontilla01@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: 'postgres'
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/root/.pgadmin
+
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+
+volumes:
+  postgres-nestjs:
+  pgadmin:
