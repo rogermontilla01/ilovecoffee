@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Event } from 'src/events/entities/event.entity';
+import { Connection, Repository } from 'typeorm';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Coffee } from './entities/coffee.entity';
@@ -14,10 +16,16 @@ export class CoffeesService {
     private readonly coffeeRepository: Repository<Coffee>,
     @InjectRepository(Flavor)
     private readonly flavorRepository: Repository<Flavor>,
+    private readonly connection: Connection,
   ) { }
 
-  async findAll() {
-    return await this.coffeeRepository.find({ relations: ["flavors"] });
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery
+    return await this.coffeeRepository.find({
+      relations: ["flavors"],
+      skip: offset, //saltar una cantidad de resultados
+      take: limit, //tomar una cantidad de resultados
+    });
   }
 
   async findOne(id: string) {
@@ -59,6 +67,30 @@ export class CoffeesService {
   async remove(id: string) {
     const coffee = await this.coffeeRepository.findOne(id);
     return await this.coffeeRepository.remove(coffee)
+  }
+
+  async recommendCoffee(coffee: Coffee) {
+    const queryRunner = this.connection.createQueryRunner()
+
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+    try {
+      coffee.recommendations++ // se incrementa si el cafe fue recomendado
+
+      const recommendEvent = new Event() //se guarda el evento recomendacion
+      recommendEvent.name = "recommend_coffee";
+      recommendEvent.type = "coffee"
+      recommendEvent.payload = { coffeeId: coffee.id }
+
+      await queryRunner.manager.save(coffee) // guarda la venta del cafe
+      await queryRunner.manager.save(recommendEvent) // guarda el evento recomendacion
+
+      await queryRunner.commitTransaction() // ejecuta la transaccion
+    } catch (err) {
+      await queryRunner.rollbackTransaction() // revierte la transaccion si hay un error
+    } finally {
+      await queryRunner.release() // libera la transaccion
+    }
   }
 
   private async preloadFlavorByName(name: string): Promise<Flavor> {
