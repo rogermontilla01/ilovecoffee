@@ -13,7 +13,7 @@ import { CoffeesModule } from './coffees/coffees.module';
     password: "postgres",
     database: "postgres",
     autoLoadEntities: true,
-    synchronize: true,
+    synchronize: false,
 
   })],
   controllers: [AppController],
