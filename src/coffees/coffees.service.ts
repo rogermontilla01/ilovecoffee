@@ -22,7 +22,7 @@ export class CoffeesService {
     @Inject(coffeesConfig.KEY)
     private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>
   ) {
-    console.log("Partial: ", coffeesConfiguration.foo)
+    // console.log("Partial: ", coffeesConfiguration.foo)
   }
 
   async findAll(paginationQuery: PaginationQueryDto) {
