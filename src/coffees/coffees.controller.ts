@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, SetMetadata, } from '@nestjs/common';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
+import { Public } from "../common/decorators/public.decorator"
+import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 
 @Controller('coffees')
 export class CoffeesController {
@@ -11,13 +13,15 @@ export class CoffeesController {
   }
 
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
+  @Public()
+  async findAll(@Query() paginationQuery: PaginationQueryDto) {
+    await new Promise(resolve => setTimeout(resolve, 5000))
     return this.coffeeService.findAll(paginationQuery)
   }
 
   @Get(":id")
-  findOne(@Param("id") id: number) {
-    console.log(typeof id)
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    console.log(id)
     return this.coffeeService.findOne("" + id)
   }
 

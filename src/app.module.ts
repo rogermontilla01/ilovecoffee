@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import appConfig from './config/app.config';
 import { APP_PIPE } from '@nestjs/core';
 // import { ConfigModule } from "@nestjs/config";
+import { CommonModule } from './common/common.module';
 // import * as Joi from '@hapi/joi';
 
 @Module({
@@ -34,7 +35,8 @@ import { APP_PIPE } from '@nestjs/core';
       load: [appConfig]
     }),
     CoffeesModule,
-    CoffeeRatingModule],
+    CoffeeRatingModule,
+    CommonModule],
   controllers: [AppController],
   providers: [AppService,
     {
