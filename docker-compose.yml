@@ -29,6 +29,17 @@ services:
       - "5432:5432"
     restart: unless-stopped
   
+  test-db:
+    container_name: postgres_container_test
+    image: postgres
+    environment:
+      POSTGRES_USER: 'postgres' 
+      POSTGRES_PASSWORD: 'postgres'
+      PGDATA: /data/postgres
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4

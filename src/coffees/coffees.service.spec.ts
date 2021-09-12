@@ -33,6 +33,8 @@ describe('CoffeesService', () => {
     }).compile();
 
     service = module.get<CoffeesService>(CoffeesService);
+    //Se inyecta el repositorio simulado, asi vamos a poder configurar lo que devuelve 
+    //cada funcion simulada del repositorio
     coffeeRepository = module.get<MockRepository>(getRepositoryToken(Coffee));
   });
 
@@ -44,7 +46,7 @@ describe('CoffeesService', () => {
     describe('when coffee with ID exists', () => {
       it('should return the coffee object', async () => {
         const coffeeId = '1';
-        const expectedCoffee = {};
+        const expectedCoffee = {}; //retorno de la funcion simulado
 
         coffeeRepository.findOne.mockReturnValue(expectedCoffee);
         const coffee = await service.findOne(coffeeId);
@@ -56,6 +58,7 @@ describe('CoffeesService', () => {
         const coffeeId = '1';
         coffeeRepository.findOne.mockReturnValue(undefined);
 
+        //Se recomienda usar trycatch para capturar cualquier posible exepcion
         try {
           await service.findOne(coffeeId);
         } catch (err) {

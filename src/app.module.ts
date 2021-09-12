@@ -2,13 +2,13 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CoffeesModule } from '../src/coffees/coffees.module';
 import { CoffeeRatingModule } from './coffee-rating/coffee-rating.module';
 import { ConfigModule } from '@nestjs/config';
 import appConfig from './config/app.config';
 import { APP_PIPE } from '@nestjs/core';
 // import { ConfigModule } from "@nestjs/config";
 import { CommonModule } from './common/common.module';
+import { CoffeesModule } from './coffees/coffees.module';
 // import * as Joi from '@hapi/joi';
 
 @Module({
