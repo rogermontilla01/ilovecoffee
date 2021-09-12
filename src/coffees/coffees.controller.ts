@@ -6,7 +6,9 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Public } from "../common/decorators/public.decorator"
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 import { Protocol } from 'src/common/decorators/protocol.decorator';
+import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Coffees")
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeeService: CoffeesService) {
@@ -15,6 +17,7 @@ export class CoffeesController {
 
   @Get()
   @Public()
+  @ApiForbiddenResponse({ description: "Forbidden." })
   async findAll(@Protocol("Http default") protocol: string, @Query() paginationQuery: PaginationQueryDto) {
     console.log("Protocol: ", protocol)
     // await new Promise(resolve => setTimeout(resolve, 5000))
